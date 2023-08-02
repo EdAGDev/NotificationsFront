@@ -1,31 +1,52 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 // @mui
 import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
 import Iconify from '../../../components/iconify';
 
+import { setLogin } from '../../../services/login'
+
 // ----------------------------------------------------------------------
 
-export default function LoginForm() {
-  const navigate = useNavigate();
+const initialForm = {
+  email: "",
+  password: ""
+}
 
+export default function LoginForm() {
+  
+  const [form, setForm] = useState(initialForm);
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleClick = () => {
-    navigate('/dashboard', { replace: true });
+  const handleChange = ({ target }) => {
+    const { name, value } = target;
+    setForm({ ...form, [name]: value })
+  }
+
+  const handleClick = async () => {
+    const resp = await setLogin(form);
+    console.log(resp);
+    <Navigate to="/dashboard" />
   };
 
   return (
     <>
       <Stack spacing={3}>
-        <TextField name="email" label="Email address" />
+        <TextField
+          name="email"
+          label="Email address"
+          value={form.email}
+          onChange={handleChange}
+        />
 
         <TextField
           name="password"
           label="Password"
           type={showPassword ? 'text' : 'password'}
+          value={form.password}
+          onChange={handleChange}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
